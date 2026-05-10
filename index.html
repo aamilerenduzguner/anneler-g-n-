@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anneler Günü</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+      color: white;
+    }
+
+    .page {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+      padding: 24px;
+      background: #000;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .page.active {
+      display: flex;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .message-box {
+      max-width: 720px;
+      width: 100%;
+      padding: 28px 22px;
+      border: 3px solid #777;
+      border-radius: 22px;
+      color: #ff1b1b;
+      font-size: clamp(1.4rem, 6vw, 2.6rem);
+      font-weight: bold;
+      line-height: 1.45;
+      background: rgba(20, 20, 20, 0.65);
+      box-shadow:
+        0 0 10px #aaa,
+        0 0 22px #777,
+        0 0 35px #ff1b1b;
+      animation: neonPulse 2s infinite alternate;
+    }
+
+    .next-btn {
+      position: absolute;
+      bottom: 35px;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      color: #ddd;
+      cursor: pointer;
+      padding: 12px 18px;
+      border-radius: 30px;
+      text-shadow: 0 0 12px white;
+      animation: bounce 1.5s infinite;
+      user-select: none;
+    }
+
+    .next-btn:hover {
+      color: #ff1b1b;
+    }
+
+    .hearts {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -40px;
+      color: red;
+      font-size: 24px;
+      animation: floatHeart linear forwards;
+      opacity: 0.85;
+    }
+
+    .bouquet-area {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .bouquet-text {
+      max-width: 760px;
+      margin-bottom: 28px;
+      padding: 22px;
+      color: #ff1b1b;
+      font-size: clamp(1.25rem, 5vw, 2.2rem);
+      font-weight: bold;
+      line-height: 1.4;
+      border: 3px solid #777;
+      border-radius: 20px;
+      background: rgba(20, 20, 20, 0.75);
+      box-shadow:
+        0 0 10px #aaa,
+        0 0 22px #777,
+        0 0 35px #ff1b1b;
+      animation: neonPulse 2s infinite alternate;
+    }
+
+    .bouquet {
+      position: relative;
+      width: min(280px, 80vw);
+      height: 360px;
+      animation: bouquetShow 1.4s ease forwards;
+    }
+
+    .flower {
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #ff2d75;
+      box-shadow: 0 0 25px #ff2d75;
+    }
+
+    .flower::before,
+    .flower::after {
+      content: "";
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: inherit;
+      box-shadow: inherit;
+    }
+
+    .flower::before {
+      left: -32px;
+      top: 0;
+    }
+
+    .flower::after {
+      left: 0;
+      top: -32px;
+    }
+
+    .flower span {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      background: #ffd700;
+      border-radius: 50%;
+      left: 24px;
+      top: 24px;
+      z-index: 2;
+      box-shadow: 0 0 14px #ffd700;
+    }
+
+    .f1 { left: 95px; top: 15px; background: #ff2d75; }
+    .f2 { left: 35px; top: 75px; background: #ff4d4d; }
+    .f3 { left: 155px; top: 75px; background: #ff69b4; }
+    .f4 { left: 80px; top: 135px; background: #e84393; }
+    .f5 { left: 135px; top: 145px; background: #ff1744; }
+
+    .stem {
+      position: absolute;
+      width: 8px;
+      height: 190px;
+      background: linear-gradient(#1fbf55, #087b32);
+      border-radius: 20px;
+      bottom: 30px;
+      left: 136px;
+      transform-origin: bottom;
+      box-shadow: 0 0 12px #1fbf55;
+    }
+
+    .s1 { transform: rotate(-24deg); }
+    .s2 { transform: rotate(-13deg); }
+    .s3 { transform: rotate(0deg); }
+    .s4 { transform: rotate(13deg); }
+    .s5 { transform: rotate(24deg); }
+
+    .wrap {
+      position: absolute;
+      bottom: 0;
+      left: 58px;
+      width: 165px;
+      height: 130px;
+      background: linear-gradient(135deg, #ffb6c1, #ff5f8f);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      box-shadow: 0 0 25px #ff5f8f;
+    }
+
+    .ribbon {
+      position: absolute;
+      bottom: 78px;
+      left: 95px;
+      width: 90px;
+      height: 28px;
+      background: #d60039;
+      border-radius: 30px;
+      box-shadow: 0 0 15px #ff1744;
+    }
+
+    @keyframes neonPulse {
+      from {
+        box-shadow:
+          0 0 8px #999,
+          0 0 18px #777,
+          0 0 28px #ff1b1b;
+      }
+      to {
+        box-shadow:
+          0 0 15px #ccc,
+          0 0 30px #999,
+          0 0 55px #ff1b1b;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes floatHeart {
+      from {
+        transform: translateY(0) scale(0.6) rotate(0deg);
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-115vh) scale(1.5) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes bouquetShow {
+      from {
+        opacity: 0;
+        transform: translateY(80px) scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        padding: 18px;
+      }
+
+      .message-box {
+        padding: 24px 18px;
+      }
+
+      .next-btn {
+        bottom: 24px;
+      }
+
+      .bouquet {
+        transform: scale(0.9);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="page active" id="page1">
+    <div class="message-box">
+      Canım Anam bu tarz günlerde önce bi beklemeyi öğren da
+    </div>
+
+    <div class="next-btn" onclick="goToPage(2)">
+      Devam etmek için tıklayın
+    </div>
+  </section>
+
+  <section class="page" id="page2">
+    <div class="message-box">
+      Valide Sultanım bu sefer param olmadığı için anneler gününü böyle kutlamak istedim
+      sanma ki senin gününü unuttum anacuğum seni unutmak mümkün mü be seni çok seviyorum
+      çiçeğini alttaki yazıya tıklayınca göreceksin
+    </div>
+
+    <div class="next-btn" onclick="goToPage(3)">
+      Devam etmek için tıklayın
+    </div>
+  </section>
+
+  <section class="page" id="page3">
+    <div class="hearts" id="hearts"></div>
+
+    <div class="bouquet-area">
+      <div class="bouquet-text">
+        Allah bir kadın yarattı ve o kadını da kalbimin ta orta yerine koydu
+      </div>
+
+      <div class="bouquet">
+        <div class="stem s1"></div>
+        <div class="stem s2"></div>
+        <div class="stem s3"></div>
+        <div class="stem s4"></div>
+        <div class="stem s5"></div>
+
+        <div class="flower f1"><span></span></div>
+        <div class="flower f2"><span></span></div>
+        <div class="flower f3"><span></span></div>
+        <div class="flower f4"><span></span></div>
+        <div class="flower f5"><span></span></div>
+
+        <div class="wrap"></div>
+        <div class="ribbon"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function goToPage(pageNumber) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+
+      document.getElementById("page" + pageNumber).classList.add("active");
+
+      if (pageNumber === 3) {
+        startHearts();
+      }
+    }
+
+    function startHearts() {
+      const heartsContainer = document.getElementById("hearts");
+      heartsContainer.innerHTML = "";
+
+      for (let i = 0; i < 70; i++) {
+        setTimeout(() => {
+          const heart = document.createElement("div");
+          heart.className = "heart";
+          heart.innerHTML = "❤";
+
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.fontSize = Math.random() * 24 + 18 + "px";
+          heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+
+          heartsContainer.appendChild(heart);
+
+          setTimeout(() => {
+            heart.remove();
+          }, 7000);
+        }, i * 120);
+      }
+    }
+  </script>
+
+</body>
+</html>
